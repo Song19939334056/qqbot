@@ -5,7 +5,7 @@ module.exports = {
 var fs = require('fs');
 var https = require('https')
 var path = require('path');
-var dir = path.join(path.resolve(__dirname, '../../') + '/src/personPic');
+var dir = path.join(path.resolve(__dirname, '../../') + '/src/personPic/');
 
 //保存图片
 function saveImage(url,path) {
@@ -53,7 +53,7 @@ function OnMessageReceive(msg){
                     //     }
                     // });                        
                     // download(fileList[0].url,dir,user_id)
-                    saveImage(fileList[0].url,dir)
+                    saveImage(fileList[0].url,dir+user_id+'.jpg')
                 }
         }
     } else {
