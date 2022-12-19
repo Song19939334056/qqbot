@@ -5,6 +5,7 @@ module.exports = {
 var fs = require('fs');
 var https = require('https')
 var path = require('path');
+const { segment } = require("oicq")
 var dir = path.join(path.resolve(__dirname, '../../') + '/src/personPic/');
 
 //保存图片
@@ -47,14 +48,17 @@ function OnMessageReceive(msg){
                     msg.reply('图片太多了，一张就行', true)
                     return
                 }else{
-                    // mkdirp(dir, function(err) {
-                    //     if(err){
-                    //         console.log(err);
-                    //     }
-                    // });                        
-                    // download(fileList[0].url,dir,user_id)
                     saveImage(fileList[0].url,dir+user_id+'.jpg')
                 }
+                break;
+            case '查证':
+                const message = [
+                    "hello world",
+                    segment.image(path.resolve(__dirname, '../../') + '/src/personPic/2272578756.jpg'),
+                    segment.face(104),
+                    segment.at(10001),
+                ]
+                msg.reply(message, true);
         }
     } else {
         if(message_type === 'private') {
