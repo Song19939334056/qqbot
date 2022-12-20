@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "ffmpeg": "^0.0.4",
     "File": "^0.10.2",
     "https": "^1.0.0",
     "oicq": "^2.3.1",

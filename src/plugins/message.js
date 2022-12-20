@@ -46,7 +46,13 @@ function OnMessageReceive(msg){
     console.log(mts)
     if(atme) {
         switch (mts){
-            case '加好友'||'添加好友'||'加qq'||'加QQ'||'加我好友'||'加我qq'||'加我QQ':
+            case '加好友':
+            case '添加好友':
+            case '加qq':
+            case '加QQ':
+            case '加我好友':
+            case '加我qq':
+            case '加我QQ':
                 member.is_friend?'':member.addFriend()
                 msg.reply('请同意', true);
                 break;
@@ -54,7 +60,8 @@ function OnMessageReceive(msg){
                 // 判断权限
                 poweDo?atList.map(item=>{group.muteMember(item.qq)}):msg.reply('没有权限', true);
                 break;
-            case '认证'||'自拍认证':
+            case '认证':
+            case '自拍认证':
                 if(fileList.length>1){
                     msg.reply('图片太多了，一张就行', true)
                     return
@@ -62,14 +69,15 @@ function OnMessageReceive(msg){
                     saveImage(fileList[0].url,dir+user_id+'.jpg')
                 }
                 break;
-            case '查证'||'查看认证':
+            case '查证':
+            case '查看认证':
                 const picPath = path.resolve(__dirname, '../../') + `/src/personPic/${atList[0].qq}.jpg`
                 judgeFileExist(picPath).then(err=>{
                     console.log(err ? '文件存在' : '文件不存在')
                     if(err) {
                         const message = [
                             "完成",
-                            segment.face(104),
+                            segment.face(66),
                             segment.image(picPath)
                         ]
                         msg.reply(message, true);
@@ -77,6 +85,52 @@ function OnMessageReceive(msg){
                         msg.reply(atList[0].text+'用户未认证', true);
                     }
                 })
+                break;
+            case '社会主义核心价值观':
+                const hxjzg = path.resolve(__dirname, '../../') + `/src/personPic/640.jpg`
+                judgeFileExist(hxjzg).then(err=>{
+                 console.log(err ? '文件存在' : '文件不存在')
+                 if(err) {
+                      const message = [segment.image(hxjzg)]
+                      msg.reply(message, false);
+                   }
+                 })
+                break;
+            case '骰子':
+                const dice = [
+                    segment.dice(2)
+                ]
+                msg.reply(dice, true);
+                break;
+            case '猜拳':
+                const rps = [
+                    segment.rps()
+                ]
+                msg.reply(rps, true);
+                break;
+            case '开e':
+            case '我emo了':
+            case 'e了':
+            case '生活好累':
+            case '我e了':
+            case '给我加加油吧':
+            case 'emo了':
+            case 'emo':
+            case 'e':
+                var urls = ['327052525','237954579','202793898','101829603','4829067'];
+                var list = [
+                    '愿君长似少年时，初心不忘乐相知。',
+                    '我写了一首诗，我不敢写的是你的名字。',
+                    '不要因为别人的几句话、几个表情、几个举止，而影响到自己的心情，希望你醒来的每一天，心情都充满阳光。',
+                    '所有的人和事，自己问心无愧就好，不是你的也别强求，反正离去的都是风景，留下的才是人生。',
+                    '生活很简单，喜欢什么就要付出努力去争取什么，但愿所有的努力都不会白费，但愿纷扰过后能够梦想成真。',
+                    '我们要学会接受，接受意外，接受变节，接受努力了却得不到回报，接受世界的残忍和人性的残缺，但是，接受却不妥协。',
+                    '曲终人散，唱不出世间冷暖；诩诩文字，写不尽心中喜悲。'
+                ]
+                var element = urls[Math.floor((Math.random()*urls.length))]
+                var mesg = list[Math.floor((Math.random()*list.length))]
+                group.shareMusic("qq",element)
+                msg.reply(mesg, true);
                 break;
         }
     } else {
@@ -98,7 +152,7 @@ function OnMessageReceive(msg){
                         if(err) {
                             const message = [
                                 "完成",
-                                segment.face(104),
+                                segment.face(66),
                                 segment.image(picPath)
                             ]
                             msg.reply(message, true);
@@ -111,6 +165,21 @@ function OnMessageReceive(msg){
                     friend.thumbUp()
                     msg.reply('完成', true);
                     break;
+                case '开e':
+                    var urls = ['327052525','237954579','202793898','101829603','4829067'];
+                    var list = [
+                        '愿君长似少年时，初心不忘乐相知。',
+                        '我写了一首诗，我不敢写的是你的名字。',
+                        '不要因为别人的几句话、几个表情、几个举止，而影响到自己的心情，希望你醒来的每一天，心情都充满阳光。',
+                        '所有的人和事，自己问心无愧就好，不是你的也别强求，反正离去的都是风景，留下的才是人生。',
+                        '生活很简单，喜欢什么就要付出努力去争取什么，但愿所有的努力都不会白费，但愿纷扰过后能够梦想成真。',
+                        '我们要学会接受，接受意外，接受变节，接受努力了却得不到回报，接受世界的残忍和人性的残缺，但是，接受却不妥协。',
+                        '曲终人散，唱不出世间冷暖；诩诩文字，写不尽心中喜悲。'
+                    ]
+                    var element = urls[Math.floor((Math.random()*urls.length))]
+                    var mesg = list[Math.floor((Math.random()*list.length))]
+                    friend.shareMusic("qq",element)
+                    msg.reply(mesg, true);
             }
         }
     }
