@@ -46,7 +46,7 @@ function OnMessageReceive(msg){
     console.log(mts)
     if(atme) {
         switch (mts){
-            case '加好友':
+            case '加好友'||'添加好友'||'加qq'||'加QQ'||'加我好友'||'加我qq'||'加我QQ':
                 member.is_friend?'':member.addFriend()
                 msg.reply('请同意', true);
                 break;
@@ -54,7 +54,7 @@ function OnMessageReceive(msg){
                 // 判断权限
                 poweDo?atList.map(item=>{group.muteMember(item.qq)}):msg.reply('没有权限', true);
                 break;
-            case '认证':
+            case '认证'||'自拍认证':
                 if(fileList.length>1){
                     msg.reply('图片太多了，一张就行', true)
                     return
@@ -62,7 +62,7 @@ function OnMessageReceive(msg){
                     saveImage(fileList[0].url,dir+user_id+'.jpg')
                 }
                 break;
-            case '查证':
+            case '查证'||'查看认证':
                 const picPath = path.resolve(__dirname, '../../') + `/src/personPic/${atList[0].qq}.jpg`
                 judgeFileExist(picPath).then(err=>{
                     console.log(err ? '文件存在' : '文件不存在')
@@ -70,8 +70,7 @@ function OnMessageReceive(msg){
                         const message = [
                             "完成",
                             segment.face(104),
-                            segment.image(picPath),
-                            segment.at(10001),
+                            segment.image(picPath)
                         ]
                         msg.reply(message, true);
                     }else{
@@ -82,9 +81,36 @@ function OnMessageReceive(msg){
         }
     } else {
         if(message_type === 'private') {
-            if(mts === '点赞') {
-                friend.thumbUp()
-                msg.reply('完成', true);
+            switch (mts){
+                case '认证':
+                    if(fileList.length>1){
+                        msg.reply('图片太多了，一张就行', true)
+                        return
+                    }else{
+                        saveImage(fileList[0].url,dir+user_id+'.jpg')
+                        msg.reply('完成', true)
+                    }
+                    break;
+                case '查证'||'查看认证':
+                    const picPath = path.resolve(__dirname, '../../') + `/src/personPic/${user_id}.jpg`
+                    judgeFileExist(picPath).then(err=>{
+                        console.log(err ? '文件存在' : '文件不存在')
+                        if(err) {
+                            const message = [
+                                "完成",
+                                segment.face(104),
+                                segment.image(picPath)
+                            ]
+                            msg.reply(message, true);
+                        }else{
+                            msg.reply(atList[0].text+'未认证', true);
+                        }
+                    })
+                    break;
+                case '点赞':
+                    friend.thumbUp()
+                    msg.reply('完成', true);
+                    break;
             }
         }
     }
