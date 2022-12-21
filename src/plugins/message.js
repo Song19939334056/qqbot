@@ -7,6 +7,28 @@ var https = require('https')
 var path = require('path');
 const { segment } = require("oicq")
 var dir = path.join(path.resolve(__dirname, '../../') + '/src/personPic/');
+const songList  = [
+    {
+        id:'327052525',
+        title:'愿君长似少年时，初心不忘乐相知。'
+    },
+    {
+        id:'237954579',
+        title:'我写了一首诗，我不敢写的是你的名字。'
+    },
+    {
+        id:'202793898',
+        title:'不要因为别人的几句话、几个表情、几个举止，而影响到自己的心情，希望你醒来的每一天，心情都充满阳光。'
+    },
+    {
+        id:'101829603',
+        title:'所有的人和事，自己问心无愧就好，不是你的也别强求，反正离去的都是风景，留下的才是人生。'
+    },
+    {
+        id:'4829067',
+        title:'生活很简单，喜欢什么就要付出努力去争取什么，但愿所有的努力都不会白费，但愿纷扰过后能够梦想成真。'
+    },
+]
 
 //保存图片
 function saveImage(url,path) {
@@ -36,7 +58,7 @@ function judgeFileExist(fileUrl) {
     })
   }
 
-function OnMessageReceive(msg){
+function OnMessageReceive(msg, client){
     console.log(msg)
     const {user_id, atme, message, friend = {}, member = {}, group = {}, message_type} = msg
     const mts = message.filter(e=>{return e.type==='text'})[0].text.trim();
@@ -111,26 +133,20 @@ function OnMessageReceive(msg){
             case '开e':
             case '我emo了':
             case 'e了':
-            case '生活好累':
             case '我e了':
             case '给我加加油吧':
             case 'emo了':
             case 'emo':
             case 'e':
-                var urls = ['327052525','237954579','202793898','101829603','4829067'];
-                var list = [
-                    '愿君长似少年时，初心不忘乐相知。',
-                    '我写了一首诗，我不敢写的是你的名字。',
-                    '不要因为别人的几句话、几个表情、几个举止，而影响到自己的心情，希望你醒来的每一天，心情都充满阳光。',
-                    '所有的人和事，自己问心无愧就好，不是你的也别强求，反正离去的都是风景，留下的才是人生。',
-                    '生活很简单，喜欢什么就要付出努力去争取什么，但愿所有的努力都不会白费，但愿纷扰过后能够梦想成真。',
-                    '我们要学会接受，接受意外，接受变节，接受努力了却得不到回报，接受世界的残忍和人性的残缺，但是，接受却不妥协。',
-                    '曲终人散，唱不出世间冷暖；诩诩文字，写不尽心中喜悲。'
-                ]
-                var element = urls[Math.floor((Math.random()*urls.length))]
-                var mesg = list[Math.floor((Math.random()*list.length))]
-                group.shareMusic("qq",element)
-                msg.reply(mesg, true);
+                const emoPic = path.resolve(__dirname, '../../') + `/src/acts/emo.jpg`
+                client.setAvatar(emoPic)
+                var element = songList[Math.floor((Math.random()*songList.length))]
+                group.shareMusic("qq",element.id)
+                const message = [
+                    element.title,
+                    segment.image(emoPic),
+                  ] 
+                msg.reply(message, false);
                 break;
         }
     } else {
@@ -144,6 +160,9 @@ function OnMessageReceive(msg){
                         saveImage(fileList[0].url,dir+user_id+'.jpg')
                         msg.reply('完成', true)
                     }
+                    break;
+                case '丽丽,我emo了':
+
                     break;
                 case '查证'||'查看认证':
                     const picPath = path.resolve(__dirname, '../../') + `/src/personPic/${user_id}.jpg`
@@ -166,20 +185,16 @@ function OnMessageReceive(msg){
                     msg.reply('完成', true);
                     break;
                 case '开e':
-                    var urls = ['327052525','237954579','202793898','101829603','4829067'];
-                    var list = [
-                        '愿君长似少年时，初心不忘乐相知。',
-                        '我写了一首诗，我不敢写的是你的名字。',
-                        '不要因为别人的几句话、几个表情、几个举止，而影响到自己的心情，希望你醒来的每一天，心情都充满阳光。',
-                        '所有的人和事，自己问心无愧就好，不是你的也别强求，反正离去的都是风景，留下的才是人生。',
-                        '生活很简单，喜欢什么就要付出努力去争取什么，但愿所有的努力都不会白费，但愿纷扰过后能够梦想成真。',
-                        '我们要学会接受，接受意外，接受变节，接受努力了却得不到回报，接受世界的残忍和人性的残缺，但是，接受却不妥协。',
-                        '曲终人散，唱不出世间冷暖；诩诩文字，写不尽心中喜悲。'
-                    ]
-                    var element = urls[Math.floor((Math.random()*urls.length))]
-                    var mesg = list[Math.floor((Math.random()*list.length))]
-                    friend.shareMusic("qq",element)
-                    msg.reply(mesg, true);
+                    const emoPic = path.resolve(__dirname, '../../') + `/src/acts/emo.jpg`
+                    client.setAvatar(emoPic)
+                    var element = songList[Math.floor((Math.random()*songList.length))]
+                    friend.shareMusic("qq",element.id)
+                    const message = [
+                        element.title,
+                        segment.image(emoPic),
+                      ] 
+                    msg.reply(message, false);
+                    break;
             }
         }
     }
