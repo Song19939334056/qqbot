@@ -2,11 +2,9 @@
 module.exports = {
     OnMessageReceive
 }
-var fs = require('fs');
-var https = require('https')
-var path = require('path');
 const { segment } = require("oicq")
-var dir = path.join(path.resolve(__dirname, '../../') + '/src/personPic/');
+const {saveImage, judgeFileExist, getFilePath} = require("../tools/file")
+var dir = getFilePath('../../','/src/assets/personPic/');
 const songList  = [
     {
         id:'327052525',
@@ -30,34 +28,6 @@ const songList  = [
     },
 ]
 
-//保存图片
-function saveImage(url,path) {
-    https.get(url,function (req,res) {
-        var imgData = '';
-        req.on('data',function (chunk) {
-            imgData += chunk;
-        })
-        req.setEncoding('binary');
-        req.on('end',function () {
-            fs.writeFile(path,imgData,'binary',function (err) {
-                console.log('保存图片成功'+path)
-            })
-        })
-    })
-}
-//判断文件是否存在
-function judgeFileExist(fileUrl) {
-    return new Promise((resolve, reject) => {
-        fs.access(fileUrl, fs.constants.F_OK, (err) => {
-          if (err) { // 文件存在时err = false；文件不存在时err = true
-            resolve(false);
-          } else {
-            resolve(true);
-          }
-        });
-    })
-  }
-
 function OnMessageReceive(msg, client){
     console.log(msg)
     const {user_id, atme, message, friend = {}, member = {}, group = {}, message_type} = msg
@@ -68,22 +38,15 @@ function OnMessageReceive(msg, client){
     console.log(mts)
     if(atme) {
         switch (mts){
-            case '加好友':
-            case '添加好友':
-            case '加qq':
-            case '加QQ':
-            case '加我好友':
-            case '加我qq':
-            case '加我QQ':
+            case '加好友': case '添加好友': case '加qq': case '加QQ': case '加我好友': case '加我qq': case '加我QQ':
                 member.is_friend?'':member.addFriend()
-                msg.reply('请同意', true);
+                msg.reply('丽丽已经加你辣', true);
                 break;
             case '禁言':
                 // 判断权限
-                poweDo?atList.map(item=>{group.muteMember(item.qq)}):msg.reply('没有权限', true);
+                poweDo?atList.map(item=>{group.muteMember(item.qq)}):msg.reply('丽丽现在没有权限，家人们，给丽丽个管理员吧', true);
                 break;
-            case '认证':
-            case '自拍认证':
+            case '认证': case '自拍认证':
                 if(fileList.length>1){
                     msg.reply('图片太多了，一张就行', true)
                     return
@@ -91,14 +54,13 @@ function OnMessageReceive(msg, client){
                     saveImage(fileList[0].url,dir+user_id+'.jpg')
                 }
                 break;
-            case '查证':
-            case '查看认证':
-                const picPath = path.resolve(__dirname, '../../') + `/src/personPic/${atList[0].qq}.jpg`
+            case '查证': case '查看认证':
+                const picPath = getFilePath('../../',`/src/assets/personPic/${atList[0].qq}.jpg`)
                 judgeFileExist(picPath).then(err=>{
                     console.log(err ? '文件存在' : '文件不存在')
                     if(err) {
                         const message = [
-                            "完成",
+                            "查到了，没有丽丽好看",
                             segment.face(66),
                             segment.image(picPath)
                         ]
@@ -108,12 +70,12 @@ function OnMessageReceive(msg, client){
                     }
                 })
                 break;
-            case '社会主义核心价值观':
-                const hxjzg = path.resolve(__dirname, '../../') + `/src/personPic/640.jpg`
+            case '社会主义核心价值观': case '正能量':
+                const hxjzg =  getFilePath('../../',`/src/assets/personPic/640.jpg`)
                 judgeFileExist(hxjzg).then(err=>{
                  console.log(err ? '文件存在' : '文件不存在')
                  if(err) {
-                      const message = [segment.image(hxjzg)]
+                      const message = ['丽丽命令你，立刻，马上，原地默读五遍！', segment.image(hxjzg)]
                       msg.reply(message, false);
                    }
                  })
@@ -130,15 +92,8 @@ function OnMessageReceive(msg, client){
                 ]
                 msg.reply(rps, true);
                 break;
-            case '开e':
-            case '我emo了':
-            case 'e了':
-            case '我e了':
-            case '给我加加油吧':
-            case 'emo了':
-            case 'emo':
-            case 'e':
-                const emoPic = path.resolve(__dirname, '../../') + `/src/acts/emo.jpg`
+            case '开e': case '我emo了': case 'e了': case '我e了': case '给我加加油吧': case 'emo了': case 'emo': case 'e': case '丽丽，我emo了': case '丽丽我emo了': case '丽丽,我emo了':
+                const emoPic = getFilePath('../../',`/src/assets/Avatar/emo.jpg`)
                 client.setAvatar(emoPic)
                 var element = songList[Math.floor((Math.random()*songList.length))]
                 group.shareMusic("qq",element.id)
@@ -154,29 +109,29 @@ function OnMessageReceive(msg, client){
             switch (mts){
                 case '认证':
                     if(fileList.length>1){
-                        msg.reply('图片太多了，一张就行', true)
+                        msg.reply('你上传这么多图片干嘛', true)
                         return
                     }else{
                         saveImage(fileList[0].url,dir+user_id+'.jpg')
-                        msg.reply('完成', true)
+                        msg.reply('丽丽已经完成啦', true)
                     }
                     break;
                 case '丽丽,我emo了':
 
                     break;
                 case '查证'||'查看认证':
-                    const picPath = path.resolve(__dirname, '../../') + `/src/personPic/${user_id}.jpg`
+                    const picPath = getFilePath('../../',`/src/assets/personPic/${user_id}.jpg` )
                     judgeFileExist(picPath).then(err=>{
                         console.log(err ? '文件存在' : '文件不存在')
                         if(err) {
                             const message = [
-                                "完成",
+                                "查到了，没有丽丽好看",
                                 segment.face(66),
                                 segment.image(picPath)
                             ]
                             msg.reply(message, true);
                         }else{
-                            msg.reply(atList[0].text+'未认证', true);
+                            msg.reply(atList[0].text+'丽丽没有找到她/他的照片', true);
                         }
                     })
                     break;
@@ -185,7 +140,7 @@ function OnMessageReceive(msg, client){
                     msg.reply('完成', true);
                     break;
                 case '开e':
-                    const emoPic = path.resolve(__dirname, '../../') + `/src/acts/emo.jpg`
+                    const emoPic = getFilePath('../../',`/src/assets/Avatar//emo.jpg`)
                     client.setAvatar(emoPic)
                     var element = songList[Math.floor((Math.random()*songList.length))]
                     friend.shareMusic("qq",element.id)
